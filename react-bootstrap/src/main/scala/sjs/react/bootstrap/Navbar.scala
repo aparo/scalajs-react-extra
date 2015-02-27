@@ -114,7 +114,7 @@ object Navbar /* mixins: BootstrapMixin*/ {
         val children = ValidComponentChildren.map(C, renderChild)
         println(s"children $children")
         val header: TagMod = if (P.brand != null || P.toggleButton != null || P.toggleNavKey != null) renderHeader else EmptyTag
-        <.nav(^.classSet1M(P.className, classes),
+        <.nav(^.classSet1M(P.className, classes), ^.role := P.role,
           <.div(^.className := (if (P.fluid) "container-fluid" else "container"),
             header
             , children

@@ -114,25 +114,26 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
         def getChildActiveProp(dchild:ReactNode):Boolean= {
           val child = dchild.asInstanceOf[js.Dynamic]
 
-          if (child.props.active.asInstanceOf[Boolean])
+          if (!js.isUndefined(child.props.active) && child.props.active.asInstanceOf[Boolean])
           {
             return true
           }
           if (P.activeKey != null)
           {
-            if (child.props.eventKey.asInstanceOf[String] == P.activeKey)
+            if (!js.isUndefined(child.props.eventKey) && child.props.eventKey.asInstanceOf[String] == P.activeKey)
             {
               return true
             }
           }
           if (P.activeHref != null)
           {
-            if (child.props.href.asInstanceOf[String] == P.activeHref)
+            if (!js.isUndefined(child.props.href) && child.props.href.asInstanceOf[String] == P.activeHref)
             {
               return true
             }
           }
-          child.props.active.asInstanceOf[Boolean]
+//          child.props.active.asInstanceOf[Boolean]
+          false
         }
 
 
@@ -142,7 +143,7 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
           val handleOptionSelect: (ReactEvent) => Unit = if (P.onSelect != null || dchild.props.onSelect != null) B.handleOptionSelect else null
           val props: Map[String, js.Any] = Map(
           "active" -> getChildActiveProp(child),
-            "onSelect" -> BootStrapFunctionUtils.createChainedFunction(child.asInstanceOf[js.Dynamic].props.onSelect.asInstanceOf[(ReactEvent) => Unit], handleOptionSelect),
+            "onSelect" -> BootStrapFunctionUtils.createChainedFunction(if(js.isUndefined(dchild.props.onSelec)) null else dchild.props.onSelect.asInstanceOf[(ReactEvent) => Unit], handleOptionSelect),
             "activeKey" ->  P.activeKey,
             "activeHref" -> P.activeHref,
             "key" -> key,

@@ -34,7 +34,8 @@ object NavItem /* mixins: BootstrapMixin*/ {
           "disabled" -> P.disabled
         )
 
-        <.li(/* {...props}*/ ^.classSet1M(P.className, classes),
+
+        <.li(/* {...props}*/^.cls := P.className, ^.classSetM(classes),
           <.a(
             ^.href := P.href,
             ^.title := P.title,
@@ -49,15 +50,15 @@ object NavItem /* mixins: BootstrapMixin*/ {
 //    .configure(LogLifecycle.verbose)
     .build
 
-  case class Props(active: Boolean = false, className: String = "", bsClass: String = "", bsSize: String = "",
+  case class Props(active: Boolean = false, className: js.UndefOr[String]=js.undefined, bsClass: String = "", bsSize: String = "",
                    bsStyle: String = "", disabled: Boolean = false, eventKey: Any = null,
-                   href: String = "#", onSelect: (Any, String, String) => Unit = null, target: String = "",
-                   title: String = "") extends BoostrapMixinProps
+                   href: String = "#", onSelect: (Any, js.UndefOr[String], js.UndefOr[String]) => Unit = null, target: js.UndefOr[String]=js.undefined,
+                   title: js.UndefOr[String]=js.undefined) extends BoostrapMixinProps
 
-  def apply(active: Boolean = false, className: String = "", bsClass: String = "", bsSize: String = "",
+  def apply(active: Boolean = false, className: js.UndefOr[String]=js.undefined, bsClass: String = "", bsSize: String = "",
             bsStyle: String = "", disabled: Boolean = false, eventKey: Any = null,
-            href: String = "#", onSelect: (Any, String, String) => Unit = null, target: String = "",
-            title: String = "", ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) =
+            href: String = "#", onSelect: (Any, js.UndefOr[String], js.UndefOr[String]) => Unit = null, target: js.UndefOr[String]=js.undefined,
+            title: js.UndefOr[String]=js.undefined, ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) =
     component.set(key, ref)(Props(active = active, className = className, bsClass = bsClass, bsSize = bsSize,
       bsStyle = bsStyle, disabled = disabled, eventKey = eventKey,
       href = href, onSelect = onSelect, target = target,

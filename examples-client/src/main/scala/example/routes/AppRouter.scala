@@ -28,9 +28,9 @@ object AppRouter {
       <.div(
         Navbar()(
           Nav()(
-                  <.div("Prova")
-//            NavItem(eventKey=1, href="#")("Link"),
-//            NavItem(eventKey=2, href="#")("Link")
+//                  <.div("Prova")
+            NavItem(eventKey=1, href="#")("Link"),
+            NavItem(eventKey=2, href="#")("Link")
 //            ,
 //            DropdownButton(eventKey=3, title="Dropdown")(
 //              MenuItem(eventKey="1")("Action"),
