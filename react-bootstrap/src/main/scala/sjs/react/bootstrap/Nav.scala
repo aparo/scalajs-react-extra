@@ -1,6 +1,7 @@
 
 package sjs.react.bootstrap
 
+import japgolly.scalajs.react.extra.LogLifecycle
 import sjs.react.bootstrap.utils.ValidComponentChildren
 import japgolly.scalajs.react.Addons.ReactCloneWithProps
 import japgolly.scalajs.react._
@@ -85,6 +86,8 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
     .render(
       (P, C, S, B) => {
 
+        println(s"Navbar In")
+
         def isExpanded: Boolean = {
           if (P.expanded)
             P.expanded
@@ -158,6 +161,7 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
           classes += ("navbar-nav" -> P.navbar)
           classes += ("pull-right" -> P.pullRight)
           classes += ("navbar-right" -> P.right)
+          println("Nav RenderUl")
           <.ul(^.classSet1M(P.className, classes), ^.ref := "ul", ValidComponentChildren.map(C, renderNavItem))
         }
 
@@ -165,6 +169,7 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
 
         var classes: Map[String, Boolean] = if (P.collapsable) getCollapsableClassSet(P.className) else Map.empty[String, Boolean]
         classes += ("navbar-collapse" -> P.collapsable)
+        println(s"Navbar ${P.navbar}")
         if (P.navbar && !P.collapsable) {
           renderUl()
         } else {
@@ -172,6 +177,7 @@ object Nav /* mixins: BootstrapMixin with CollapsableMixin*/ {
         }
       }
     )
+    .configure(LogLifecycle.verbose)
     .build
 
   /*

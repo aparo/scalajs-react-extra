@@ -37,7 +37,7 @@ object ValidComponentChildren {
 //    React.Children.map(children, f)
 //  }
 
-  def map(children:PropsChildren, func: (ReactNode,Int) => ReactElement):Seq[ReactNode] = {
+  def map(children:PropsChildren, func: (ReactNode,Int) => ReactElement):js.Array[ReactNode] = {
     var index = 0
     val f : js.Function1[ReactNode, Any]={
       (child:ReactNode) =>
@@ -50,12 +50,15 @@ object ValidComponentChildren {
         }
     }
     if(children==null)
-      return Nil
+      return js.Array()
 
     val result=React.Children.map(children, f)
-    if(result.isDefined)
-      return Nil
-    result.get.asInstanceOf[Seq[ReactNode]]
+//    if(result.isDefined)
+//      return Nil
+//    result.get.asInstanceOf[Seq[ReactNode]]
+    val r = result.asInstanceOf[js.Array[ReactNode]]
+    println(s"map $r")
+    r
   }
 
   /**

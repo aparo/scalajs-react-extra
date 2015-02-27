@@ -1,6 +1,7 @@
 
 package sjs.react.bootstrap
 
+import japgolly.scalajs.react.extra.LogLifecycle
 import sjs.react.bootstrap.utils.ValidComponentChildren
 import japgolly.scalajs.react.Addons.ReactCloneWithProps
 import japgolly.scalajs.react._
@@ -14,14 +15,14 @@ object Navbar /* mixins: BootstrapMixin*/ {
   case class State(navExpanded: Boolean = false)
 
   case class Props(brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
-                   bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/, defaultNavExpanded: Boolean = false,
-                   fixedBottom: Boolean = false, fixedTop: Boolean = false, fluid: Boolean = false,
+                   bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/ , defaultNavExpanded: Boolean = false,
+                   fixedBottom: Boolean = false, fixedTop: Boolean = false, fluid: Boolean = true,
                    inverse: Boolean = false, navExpanded: Option[Boolean] = None, onToggle: (ReactEvent) => Unit = null,
                    role: String = "navigation", staticTop: Boolean = false, toggleButton: ReactElement = null,
                    toggleNavKey: Any = null) extends BoostrapMixinProps
 
   def apply(brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
-            bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/, defaultNavExpanded: Boolean = false,
+            bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/ , defaultNavExpanded: Boolean = false,
             fixedBottom: Boolean = false, fixedTop: Boolean = false, fluid: Boolean = false,
             inverse: Boolean = false, navExpanded: Option[Boolean] = None, onToggle: (ReactEvent) => Unit = null,
             role: String = "navigation", staticTop: Boolean = false, toggleButton: ReactElement = null,
@@ -37,7 +38,7 @@ object Navbar /* mixins: BootstrapMixin*/ {
   class Backend(t: BackendScope[Props, State]) {
     var isChanging = true
 
-    def handleToggle(event: ReactEvent):Unit= {
+    def handleToggle(event: ReactEvent): Unit = {
       if (t.props.onToggle != null) {
         isChanging = true
         t.props.onToggle(event)
@@ -56,26 +57,26 @@ object Navbar /* mixins: BootstrapMixin*/ {
         def isNavExpanded: Boolean = if (P.navExpanded.isDefined) P.navExpanded.get else S.navExpanded
 
         def renderHeader: ReactElement = {
-          val brand:TagMod =
-            if (P.brand!=null) {
+          val brand: TagMod =
+            if (P.brand != null) {
               if (React.isValidElement(P.brand))
                 ReactCloneWithProps(P.brand, Map("class" -> "navbar-brand"))
               else
                 <.span(^.className := "navbar-brand", P.brand)
-            } else null
-          <.div(^.className := "navbar-header", brand, if (P.toggleButton != null || P.toggleNavKey != null) renderToggleButton else null)
+            } else EmptyTag
+          <.div(^.className := "navbar-header", brand, if (P.toggleButton != null || P.toggleNavKey != null) renderToggleButton else EmptyTag)
         }
 
 
         def renderToggleButton: ReactElement = {
           if (React.isValidElement(P.toggleButton)) {
             ReactCloneWithProps(P.toggleButton, Map("className" -> "navbar-toggle"
-            //TODO restore
-//              ,
-//              "onClick" -> BootStrapFunctionUtils.createChainedFunction(B.handleToggle , ((P.toggleButton.asInstanceOf[js.Dynamic].props).onClick).asInstanceOf[(ReactEvent) => Unit])
+              //TODO restore
+              //              ,
+              //              "onClick" -> BootStrapFunctionUtils.createChainedFunction(B.handleToggle , ((P.toggleButton.asInstanceOf[js.Dynamic].props).onClick).asInstanceOf[(ReactEvent) => Unit])
             ))
           }
-          val children:List[TagMod] = if (P.toggleButton != null) List(P.toggleButton)
+          val children: List[TagMod] = if (P.toggleButton != null) List(P.toggleButton)
           else List(
             <.span(^.className := "sr-only", ^.key := 0, "Toggle navigation"),
             <.span(^.className := "icon-bar", ^.key := 1),
@@ -87,7 +88,7 @@ object Navbar /* mixins: BootstrapMixin*/ {
 
         def renderChild(child: ReactNode, index: Int): ReactElement = {
           val dchild = child.asInstanceOf[js.Dynamic]
-          val key: Any = if (child.hasOwnProperty("key")) child.asInstanceOf[js.Dynamic].key else index
+          val key: Any = if (child.hasOwnProperty("key") && dchild.key != null) dchild.key else index
           val props: Map[String, Any] = Map(
             "navbar" -> true,
             "collapsable" -> (P.toggleNavKey != null && P.toggleNavKey == dchild.props.eventKey),
@@ -95,7 +96,11 @@ object Navbar /* mixins: BootstrapMixin*/ {
             "key" -> key,
             "ref" -> child.asInstanceOf[js.Dynamic].ref
           )
-          ReactCloneWithProps(child, props.asInstanceOf[Map[String, js.Any]])
+
+
+          val obj = ReactCloneWithProps(child, props.asInstanceOf[Map[String, js.Any]])
+          println(s"NavBar ${child} $obj")
+          obj
         }
 
 
@@ -106,16 +111,22 @@ object Navbar /* mixins: BootstrapMixin*/ {
         classes += ("navbar-static-top" -> P.staticTop)
         classes += ("navbar-inverse" -> P.inverse)
 
+        val children = ValidComponentChildren.map(C, renderChild)
+        println(s"children $children")
+        val header: TagMod = if (P.brand != null || P.toggleButton != null || P.toggleNavKey != null) renderHeader else EmptyTag
         <.nav(^.classSet1M(P.className, classes),
           <.div(^.className := (if (P.fluid) "container-fluid" else "container"),
-        if (P.brand != null || P.toggleButton != null || P.toggleNavKey!=null)
-          renderHeader else null,
-        ValidComponentChildren.map(C, renderChild)) )
+            header
+            , children
+          )
+        )
       }
 
-    ).shouldComponentUpdate((scope, nextP, nextS) => {
-    !scope.backend.isChanging
-  })
+    )
+    //    .shouldComponentUpdate((scope, nextP, nextS) => {
+    //    !scope.backend.isChanging
+    //  })
+    //    .configure(LogLifecycle.verbose)
     .build
 
 

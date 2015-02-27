@@ -12,7 +12,7 @@ lazy val exampleServer = (project in file("examples-server")).settings(
     "org.webjars" %% "webjars-play" % "2.3.0",
     "org.webjars" % "bootstrap" % "3.3.2-1",
     "org.webjars" % "font-awesome" % "4.3.0-1",
-    "org.webjars" % "react" % "0.12.1",
+    "org.webjars" % "react" % "0.12.2",
     "org.webjars" % "jquery" % "1.11.1"
   ),
   EclipseKeys.skipParents in ThisBuild := false).
