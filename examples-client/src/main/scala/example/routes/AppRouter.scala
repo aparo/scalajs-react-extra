@@ -6,6 +6,7 @@ import japgolly.scalajs.react._
 import japgolly.scalajs.react.extra.router.{BaseUrl, Redirect, RoutingRules}
 import org.scalajs.dom
 import japgolly.scalajs.react.vdom.prefix_<^._
+import sjs.react.bootstrap.Navbar.NavBarItem
 import sjs.react.bootstrap._
 
 /**
@@ -26,11 +27,20 @@ object AppRouter {
 
     override protected def interceptRender(i: InterceptionR): ReactElement = {
       <.div(
-        Navbar()(
-          Nav()(
+        Navbar(
+        items = List(
+          NavBarItem(label="Link", href="#"),
+          NavBarItem(label="Link 2", href="#")
+        ),
+        rightItems =List(
+          NavBarItem(label="R Link", href="#"),
+          NavBarItem(label="R Link 2", href="#")
+        )
+
+//          Nav()(
 //                  <.div("Prova")
-            NavItem(eventKey=1, href="#")("Link"),
-            NavItem(eventKey=2, href="#")("Link")
+//            NavItem(eventKey=1, href="#")("Link"),
+//            NavItem(eventKey=2, href="#")("Link")
 //            ,
 //            DropdownButton(eventKey=3, title="Dropdown")(
 //              MenuItem(eventKey="1")("Action"),
@@ -40,7 +50,7 @@ object AppRouter {
 //              MenuItem(eventKey="4")("Separated link"),
 //            )
 
-          )
+//          )
         ),
         i.element,
         <.div(^.textAlign := "center", ^.key := "footer")(

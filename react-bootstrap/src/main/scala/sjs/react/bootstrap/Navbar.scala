@@ -6,33 +6,46 @@ import sjs.react.bootstrap.utils.ValidComponentChildren
 import japgolly.scalajs.react.Addons.ReactCloneWithProps
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
+import sjs.utils.IDGenerator
 
 import scala.scalajs.js
 
 
 object Navbar /* mixins: BootstrapMixin*/ {
 
-  case class State(navExpanded: Boolean = false)
+  case class NavBarItem(label:String, href: js.UndefOr[String] = "", target: js.UndefOr[String] = "", children: List[NavBarItem] = Nil) {
+    def render(selected:String)(implicit idGenerator:IDGenerator): TagMod = {
+      val id=idGenerator.getId
 
-  case class Props(brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
-                   bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/ , defaultNavExpanded: Boolean = false,
+      <.li(^.classSet("active" -> (id==selected)), <.a(^.href :=href, label))
+    }
+  }
+
+  case class State(navExpanded: Boolean = false, selectedKey:String="")
+
+  case class Props(items: List[NavBarItem] = Nil, rightItems: List[NavBarItem] = Nil, brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
+                   id: String = "nav-bar",
+                   bsStyle: String = "default", defaultNavExpanded: Boolean = true,
                    fixedBottom: Boolean = false, fixedTop: Boolean = false, fluid: Boolean = true,
+                   searchForm: Boolean = true,
                    inverse: Boolean = false, navExpanded: Option[Boolean] = None, onToggle: (ReactEvent) => Unit = null,
                    role: String = "navigation", staticTop: Boolean = false, toggleButton: ReactElement = null,
                    toggleNavKey: Any = null) extends BoostrapMixinProps
 
-  def apply(brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
-            bsStyle: String = "default", componentClass: ReactElement = null /*"Nav"*/ , defaultNavExpanded: Boolean = false,
+  def apply(items: List[NavBarItem] = Nil, rightItems: List[NavBarItem] = Nil,
+            brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
+            bsStyle: String = "default", defaultNavExpanded: Boolean = false,
             fixedBottom: Boolean = false, fixedTop: Boolean = false, fluid: Boolean = false,
+            searchForm: Boolean = true,
             inverse: Boolean = false, navExpanded: Option[Boolean] = None, onToggle: (ReactEvent) => Unit = null,
             role: String = "navigation", staticTop: Boolean = false, toggleButton: ReactElement = null,
             toggleNavKey: Any = null,
-            ref: js.UndefOr[String] = "", key: js.Any = {})(children: ReactNode*) =
-    component.set(key, ref)(Props(brand = brand, className = className, bsClass = bsClass, bsSize = bsSize,
-      bsStyle = bsStyle, componentClass = componentClass, defaultNavExpanded = defaultNavExpanded,
-      fixedBottom = fixedBottom, fixedTop = fixedTop, fluid = fluid,
+            ref: js.UndefOr[String] = "", key: js.Any = {}) =
+    component.set(key, ref)(Props(items=items, rightItems=rightItems, brand = brand, className = className, bsClass = bsClass, bsSize = bsSize,
+      bsStyle = bsStyle, defaultNavExpanded = defaultNavExpanded,
+      fixedBottom = fixedBottom, fixedTop = fixedTop, fluid = fluid, searchForm = searchForm,
       inverse = inverse, navExpanded = navExpanded, onToggle = onToggle,
-      role = role, staticTop = staticTop, toggleButton = toggleButton, toggleNavKey = toggleNavKey), children)
+      role = role, staticTop = staticTop, toggleButton = toggleButton, toggleNavKey = toggleNavKey))
 
 
   class Backend(t: BackendScope[Props, State]) {
@@ -52,7 +65,9 @@ object Navbar /* mixins: BootstrapMixin*/ {
     .initialStateP(P => State(P.defaultNavExpanded))
     .backend(new Backend(_))
     .render(
-      (P, C, S, B) => {
+      (P, S, B) => {
+
+        implicit val idGenerator=new IDGenerator(P.id)
 
         def isNavExpanded: Boolean = if (P.navExpanded.isDefined) P.navExpanded.get else S.navExpanded
 
@@ -86,38 +101,51 @@ object Navbar /* mixins: BootstrapMixin*/ {
           <.button(^.className := "navbar-toggle", ^.tpe := "button", ^.onClick ==> B.handleToggle, children)
         }
 
-        def renderChild(child: ReactNode, index: Int): ReactElement = {
-          val dchild = child.asInstanceOf[js.Dynamic]
-          val key: Any = if (child.hasOwnProperty("key") && dchild.key != null) dchild.key else index
-          val props: Map[String, Any] = Map(
-            "navbar" -> true,
-            "collapsable" -> (P.toggleNavKey != null && P.toggleNavKey == dchild.props.eventKey),
-            "expanded" -> (P.toggleNavKey != null && P.toggleNavKey == dchild.props.eventKey && isNavExpanded),
-            "key" -> key,
-            "ref" -> child.asInstanceOf[js.Dynamic].ref
+        //        def renderChild(child: ReactNode, index: Int): ReactElement = {
+        //          val dchild = child.asInstanceOf[js.Dynamic]
+        //          val key: Any = if (child.hasOwnProperty("key") && dchild.key != null) dchild.key else index
+        //          val props: Map[String, Any] = Map(
+        //            "navbar" -> true,
+        //            "collapsable" -> (P.toggleNavKey != null && P.toggleNavKey == dchild.props.eventKey),
+        //            "expanded" -> (P.toggleNavKey != null && P.toggleNavKey == dchild.props.eventKey && isNavExpanded),
+        //            "key" -> key,
+        //            "ref" -> child.asInstanceOf[js.Dynamic].ref
+        //          )
+        //
+        //
+        //          val obj = ReactCloneWithProps(child, props.asInstanceOf[Map[String, js.Any]])
+        //          println(s"NavBar ${child} $obj")
+        //          obj
+        //        }
+
+        def searchForm: TagMod = {
+          if (!P.searchForm) return EmptyTag
+          <.form(^.cls := "navbar-form navbar-left", ^.role := "search",
+            <.div(^.cls := "form-group",
+              <.input(^.tpe := "text", ^.cls := "form-control", ^.placeholder := "Search")
+            ),
+
+            <.button(^.tpe := "submit", ^.cls := "btn btn-default", "Submit")
           )
 
-
-          val obj = ReactCloneWithProps(child, props.asInstanceOf[Map[String, js.Any]])
-          println(s"NavBar ${child} $obj")
-          obj
         }
 
+        val classes = P.getBsClassSet ++ Map(
+          "navbar-fixed-top" -> P.fixedTop,
+          "navbar-fixed-bottom" -> P.fixedBottom,
+          "navbar-static-top" -> P.staticTop,
+          "navbar-inverse" -> P.inverse)
 
-        var classes = P.getBsClassSet
-        //      var ComponentClass = P.componentClass
-        classes += ("navbar-fixed-top" -> P.fixedTop)
-        classes += ("navbar-fixed-bottom" -> P.fixedBottom)
-        classes += ("navbar-static-top" -> P.staticTop)
-        classes += ("navbar-inverse" -> P.inverse)
 
-        val children = ValidComponentChildren.map(C, renderChild)
-        println(s"children $children")
+
         val header: TagMod = if (P.brand != null || P.toggleButton != null || P.toggleNavKey != null) renderHeader else EmptyTag
         <.nav(^.classSet1M(P.className, classes), ^.role := P.role,
           <.div(^.className := (if (P.fluid) "container-fluid" else "container"),
-            header
-            , children
+            header,
+            <.div(^.cls := "collapse navbar-collapse",
+              <.ul(^.cls := "nav navbar-nav", P.items.map(_.render(S.selectedKey))),
+              searchForm,
+              <.ul(^.cls := "nav navbar-nav navbar-right", P.rightItems.map(_.render(S.selectedKey))))
           )
         )
       }
