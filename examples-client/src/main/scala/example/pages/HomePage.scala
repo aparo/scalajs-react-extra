@@ -1,8 +1,7 @@
 package example.pages
 
-import example.components.{TabbedJSONViewer, JSONViewer}
 import sjs.FontAwesome
-import sjs.react.bootstrap.Button
+import sjs.react.bootstrap.{Modal, Button}
 import japgolly.scalajs.react._
 import japgolly.scalajs.react.vdom.prefix_<^._
 
@@ -36,7 +35,9 @@ object HomePage {
       |}
     """.stripMargin
 
-  case class State()
+  val theDialogWindowRef = Ref.to(Modal.component, "theDialogWindowRef")
+
+  case class State(dialogShow:Boolean=false)
 
   class Backend(t: BackendScope[_, State]) {
 
@@ -47,6 +48,10 @@ object HomePage {
 
     def onClick(event: ReactEvent = null): Unit = {
       println("clicked")
+      t.modState(_.copy(dialogShow = true))
+    }
+    def onRequestHide(event:ReactEvent): Unit={
+      println("modal dismiss")
     }
   }
 
@@ -57,7 +62,8 @@ object HomePage {
     <.div(
       <.div(^.key := "info")(
         Button(title = "Prova", onClick = B.onClick)("Prova"),
-        <.button(^.onClick --> B.onClick(), FontAwesome.anchor, "Prova")
+        <.button(^.onClick --> B.onClick(), FontAwesome.anchor, "Prova"),
+      Modal(title= <.span("My Modal"), onRequestHide=B.onRequestHide, ref=theDialogWindowRef)("Test")
       )
 //      ,TabbedJSONViewer(JSON.parse(jsonSample))
 //    ,JSONViewer(JSON.parse(jsonSample))

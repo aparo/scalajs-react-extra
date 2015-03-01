@@ -30,7 +30,7 @@ object AppRouter {
         Navbar(
         items = List(
           NavBarItem(label="Link", href="#"),
-          NavBarItem(label="Link 2", href="#")
+          NavBarItem(label="Link 2", href="#", children=List(NavBarItem(label="Link 2-1", href="#"), NavBarItem(label="Link 2-2", href="#")))
         ),
         rightItems =List(
           NavBarItem(label="R Link", href="#"),

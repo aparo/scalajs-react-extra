@@ -2,6 +2,7 @@
 package sjs.react.bootstrap
 
 import japgolly.scalajs.react.extra.LogLifecycle
+import japgolly.scalajs.react.vdom.Attr
 import sjs.react.bootstrap.utils.ValidComponentChildren
 import japgolly.scalajs.react.Addons.ReactCloneWithProps
 import japgolly.scalajs.react._
@@ -13,15 +14,25 @@ import scala.scalajs.js
 
 object Navbar /* mixins: BootstrapMixin*/ {
 
-  case class NavBarItem(label:String, href: js.UndefOr[String] = "", target: js.UndefOr[String] = "", children: List[NavBarItem] = Nil) {
-    def render(selected:String)(implicit idGenerator:IDGenerator): TagMod = {
-      val id=idGenerator.getId
+  case class NavBarItem(label: String, href: js.UndefOr[String] = "", target: js.UndefOr[String] = "", children: List[NavBarItem] = Nil) {
+    def render(id: String, selected: String): TagMod = {
+      val idGen = new IDGenerator(id)
+      if (children.isEmpty)
+        <.li(^.classSet("active" -> (id == selected)), <.a(^.href := href, label))
+      else {
+        <.li(^.cls := "dropdown",
+          <.a(^.href := "#", ^.cls := "dropdown-toggle", Attr("data-toggle") := "dropdown",
+            ^.role := "button", ^.aria.expanded := "false", label, <.span(^.cls := "caret")),
+          <.ul(^.cls := "dropdown-menu", ^.role := "menu", children.map(_.render(idGen.getId, selected))
+          )
 
-      <.li(^.classSet("active" -> (id==selected)), <.a(^.href :=href, label))
+        )
+
+      }
     }
   }
 
-  case class State(navExpanded: Boolean = false, selectedKey:String="")
+  case class State(navExpanded: Boolean = false, selectedKey: String = "")
 
   case class Props(items: List[NavBarItem] = Nil, rightItems: List[NavBarItem] = Nil, brand: ReactElement = null, className: String = "", bsClass: String = "navbar", bsSize: String = "",
                    id: String = "nav-bar",
@@ -41,7 +52,7 @@ object Navbar /* mixins: BootstrapMixin*/ {
             role: String = "navigation", staticTop: Boolean = false, toggleButton: ReactElement = null,
             toggleNavKey: Any = null,
             ref: js.UndefOr[String] = "", key: js.Any = {}) =
-    component.set(key, ref)(Props(items=items, rightItems=rightItems, brand = brand, className = className, bsClass = bsClass, bsSize = bsSize,
+    component.set(key, ref)(Props(items = items, rightItems = rightItems, brand = brand, className = className, bsClass = bsClass, bsSize = bsSize,
       bsStyle = bsStyle, defaultNavExpanded = defaultNavExpanded,
       fixedBottom = fixedBottom, fixedTop = fixedTop, fluid = fluid, searchForm = searchForm,
       inverse = inverse, navExpanded = navExpanded, onToggle = onToggle,
@@ -67,7 +78,7 @@ object Navbar /* mixins: BootstrapMixin*/ {
     .render(
       (P, S, B) => {
 
-        implicit val idGenerator=new IDGenerator(P.id)
+        implicit val idGenerator = new IDGenerator(P.id)
 
         def isNavExpanded: Boolean = if (P.navExpanded.isDefined) P.navExpanded.get else S.navExpanded
 
@@ -143,9 +154,9 @@ object Navbar /* mixins: BootstrapMixin*/ {
           <.div(^.className := (if (P.fluid) "container-fluid" else "container"),
             header,
             <.div(^.cls := "collapse navbar-collapse",
-              <.ul(^.cls := "nav navbar-nav", P.items.map(_.render(S.selectedKey))),
+              <.ul(^.cls := "nav navbar-nav", P.items.map(_.render(idGenerator.getId, S.selectedKey))),
               searchForm,
-              <.ul(^.cls := "nav navbar-nav navbar-right", P.rightItems.map(_.render(S.selectedKey))))
+              <.ul(^.cls := "nav navbar-nav navbar-right", P.rightItems.map(_.render(idGenerator.getId, S.selectedKey))))
           )
         )
       }
