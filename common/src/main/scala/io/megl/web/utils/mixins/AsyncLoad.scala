@@ -1,12 +1,14 @@
-package sjs.utils.mixins
+/*
+ * Copyright (c) 2016 - Alberto Paro All Rights Reserved.
+ */
 
-import japgolly.scalajs.react.ReactComponentB
+package io.megl.web.utils.mixins
+
+import japgolly.scalajs.react.{Callback, ReactComponentB}
 import org.scalajs.dom
 import org.scalajs.dom.ext.PimpedNodeList
 
-/**
- * Created by chandrasekharkode .
- *
+/***
  * To load resources(javascript,stylesheet) on fly
  */
 trait AsyncLoad {
@@ -18,8 +20,8 @@ trait AsyncLoad {
 }
 
 object AsyncLoad {
-  def mixin[P, S, B] = (c: ReactComponentB[P, S, B]) => {
-    c.componentWillMount(scope => {
+  def mixin[P, S, B, N <: japgolly.scalajs.react.TopNode] = (c: ReactComponentB[P, S, B, N]) => {
+    c.componentWillMount(scope => Callback {
       val async = scope.backend.asInstanceOf[AsyncLoad]
       async.cssResources.foreach(s => {
         val head =   dom.document.head

@@ -1,4 +1,8 @@
-package sjs.utils
+/*
+ * Copyright (c) 2016 - Alberto Paro All Rights Reserved.
+ */
+
+package io.megl.web.utils
 
 /* a simple incremental id generator to manage key */
 class IDGenerator(val token:String){

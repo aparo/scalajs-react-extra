@@ -1,9 +1,13 @@
-package sjs.utils.mixins
+/*
+ * Copyright (c) 2016 - Alberto Paro All Rights Reserved.
+ */
 
-import japgolly.scalajs.react.ReactComponentB
+package io.megl.web.utils.mixins
+
+import japgolly.scalajs.react.{Callback, ReactComponentB}
 import org.scalajs.dom
 import org.scalajs.dom.Event
-import sjs.utils.Events
+import web.utils.Events
 
 import scala.scalajs.js
 
@@ -17,12 +21,12 @@ trait WindowListeners {
 }
 
 object WindowListeners {
-  def mixin[P,S,B] = (c:ReactComponentB[P,S,B]) => {
-    c.componentDidMount(scope => {
+  def mixin[P, S, B, N <: japgolly.scalajs.react.TopNode] = (c: ReactComponentB[P, S, B, N]) => {
+    c.componentDidMount(scope => Callback {
       val listeners = scope.backend.asInstanceOf[WindowListeners].listeners
       listeners.foreach{ case (name,function) => Events.on(dom.window,name,function) }
     })
-      .componentWillUnmount(scope => {
+      .componentWillUnmount(scope => Callback {
       val listeners = scope.backend.asInstanceOf[WindowListeners].listeners
       listeners.foreach{ case (name,function) => Events.off(dom.window,name,function) }
     })

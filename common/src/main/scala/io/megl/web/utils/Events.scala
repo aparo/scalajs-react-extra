@@ -1,4 +1,8 @@
-package sjs.utils
+/*
+ * Copyright (c) 2016 - Alberto Paro All Rights Reserved.
+ */
+
+package io.megl.web.utils
 
 import japgolly.scalajs.react.TopNode
 import org.scalajs.dom.{Event, EventTarget}
