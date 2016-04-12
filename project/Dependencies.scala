@@ -38,10 +38,6 @@ object Dependencies {
     val dom= Def.setting("org.scala-js" %%% "scalajs-dom" % "0.9.0")
   }
 
-
-  // JVM dependency with JS fork
-  //val parboiled = jvmAndJsFork("org.parboiled", "parboiled", "2.1.0")("com.github.japgolly.fork.parboiled")
-
   // JVM & JS cross-compiled dependencies
   val boopickle =  Def.setting("me.chrons" %%% "boopickle" % "1.1.3")
   val μTest     =  Def.setting("com.lihaoyi" %%% "utest" % "0.4.3") 

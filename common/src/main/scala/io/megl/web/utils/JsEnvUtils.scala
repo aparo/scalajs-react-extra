@@ -1,3 +1,5 @@
+package io.megl.web.utils
+
 import scala.util.Try
 import scalajs.js.Dynamic.global  
 
