@@ -7,7 +7,7 @@ import org.scalajs.sbtplugin.cross.CrossProject
 object Dependencies {
 
   object Scala {
-    lazy val version  = "2.11.8"
+    lazy val version  = "2.12.4"
     val compiler = "org.scala-lang" %% "scala-compiler"  % version
     val library  = "org.scala-lang" %% "scala-library"  % version
     val reflect  = "org.scala-lang" %% "scala-reflect" % version
@@ -24,7 +24,7 @@ object Dependencies {
 
   // JS-only dependency family
   object React {
-    lazy val version  = "0.11.0"
+    lazy val version  = "1.2.0"
     val core    =  Def.setting("com.github.japgolly.scalajs-react" %%% "core" % version)
     val test    =  Def.setting("com.github.japgolly.scalajs-react" %%%"test" % version)
     val scalaz  = Seq(Def.setting("com.github.japgolly.scalajs-react" %%% "ext-scalaz72"% version),  Scalaz.effect)
@@ -35,7 +35,7 @@ object Dependencies {
 
   // JS-only dependency family
   object ScalaJs {
-    val dom= Def.setting("org.scala-js" %%% "scalajs-dom" % "0.9.0")
+    val dom= Def.setting("org.scala-js" %%% "scalajs-dom" % "0.9.5")
   }
 
   // JVM & JS cross-compiled dependencies

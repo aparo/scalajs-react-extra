@@ -1,5 +1,6 @@
 import sbt.Project.projectToRef
 import Dependencies._
+/*
 lazy val clients = Seq(examplesClient, reactBootstrap)
 
 lazy val exampleServer = (project in file("examples-server")).settings(
@@ -22,28 +23,25 @@ lazy val examplesClient = (project in file("examples-client")).
   enablePlugins(ScalaJSPlugin, ScalaJSPlay).settings(
   scalaVersion := Dependencies.Scala.version,
   persistLauncher := true,
-  persistLauncher in Test := false,
   sourceMapsDirectories += exampleSharedJs.base / "..",
   unmanagedSourceDirectories in Compile := Seq((scalaSource in Compile).value),
   libraryDependencies ++= Seq(React.extra.value, ScalaJs.dom.value)).
   dependsOn(exampleSharedJs, reactBootstrap)
+*/
 
 lazy val commonJS = (project in file("common")).
   enablePlugins(ScalaJSPlugin).settings(
   scalaVersion := Dependencies.Scala.version,
-  persistLauncher := false,
-  persistLauncher in Test := false,
   libraryDependencies ++= Seq())
 
 
 lazy val reactBootstrap = (project in file("react-bootstrap")).
   enablePlugins(ScalaJSPlugin).settings(
   scalaVersion := Dependencies.Scala.version,
-  persistLauncher := false,
-  persistLauncher in Test := false,
   libraryDependencies ++= Seq(React.extra.value, ScalaJs.dom.value))
   .dependsOn(commonJS)
 
+/*
 lazy val exampleShared = (crossProject.crossType(CrossType.Pure) in file("examples-shared")).
   settings(scalaVersion := Dependencies.Scala.version).
   jsConfigure(_ enablePlugins ScalaJSPlay).
@@ -54,3 +52,4 @@ lazy val exampleSharedJs = exampleShared.js
 
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project exampleServer", _: State)) compose (onLoad in Global).value
+*/
